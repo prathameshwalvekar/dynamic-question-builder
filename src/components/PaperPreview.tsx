@@ -5,6 +5,8 @@ import { MatchWordsPreview } from './questions/MatchWordsPreview';
 import { IdentifyImagePreview } from './questions/IdentifyImagePreview';
 import { MultipleChoicePreview } from './questions/MultipleChoicePreview';
 import { TrueFalsePreview } from './questions/TrueFalsePreview';
+import { ShortAnswerPreview } from './questions/ShortAnswerPreview';
+import { LongAnswerPreview } from './questions/LongAnswerPreview';
 import { Button } from './ui/button';
 import { Printer } from 'lucide-react';
 
@@ -89,6 +91,10 @@ function renderQuestion(question: Question, index: number) {
       return <MultipleChoicePreview key={question.id} question={question} index={index} />;
     case 'true-false':
       return <TrueFalsePreview key={question.id} question={question} index={index} />;
+    case 'short-answer':
+      return <ShortAnswerPreview key={question.id} question={question} index={index} />;
+    case 'long-answer':
+      return <LongAnswerPreview key={question.id} question={question} index={index} />;
     default:
       return null;
   }
