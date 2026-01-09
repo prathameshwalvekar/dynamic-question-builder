@@ -1,11 +1,14 @@
+import { useState } from 'react';
 import { Question } from '@/types/question';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Trash2, GripVertical } from 'lucide-react';
+import { cn } from '@/lib/utils';
 
 interface QuestionListProps {
   questions: Question[];
   onRemove: (id: string) => void;
+  onReorder: (questions: Question[]) => void;
 }
 
 const questionTypeLabels: Record<string, string> = {
@@ -15,9 +18,52 @@ const questionTypeLabels: Record<string, string> = {
   'identify-image': 'Identify Image',
   'multiple-choice': 'Multiple Choice',
   'true-false': 'True/False',
+  'short-answer': 'Short Answer',
+  'long-answer': 'Long Answer',
 };
 
-export function QuestionList({ questions, onRemove }: QuestionListProps) {
+export function QuestionList({ questions, onRemove, onReorder }: QuestionListProps) {
+  const [draggedIndex, setDraggedIndex] = useState<number | null>(null);
+  const [dragOverIndex, setDragOverIndex] = useState<number | null>(null);
+
+  const handleDragStart = (e: React.DragEvent, index: number) => {
+    setDraggedIndex(index);
+    e.dataTransfer.effectAllowed = 'move';
+    e.dataTransfer.setData('text/plain', index.toString());
+  };
+
+  const handleDragOver = (e: React.DragEvent, index: number) => {
+    e.preventDefault();
+    e.dataTransfer.dropEffect = 'move';
+    setDragOverIndex(index);
+  };
+
+  const handleDragLeave = () => {
+    setDragOverIndex(null);
+  };
+
+  const handleDrop = (e: React.DragEvent, dropIndex: number) => {
+    e.preventDefault();
+    if (draggedIndex === null || draggedIndex === dropIndex) {
+      setDraggedIndex(null);
+      setDragOverIndex(null);
+      return;
+    }
+
+    const newQuestions = [...questions];
+    const [draggedItem] = newQuestions.splice(draggedIndex, 1);
+    newQuestions.splice(dropIndex, 0, draggedItem);
+    onReorder(newQuestions);
+
+    setDraggedIndex(null);
+    setDragOverIndex(null);
+  };
+
+  const handleDragEnd = () => {
+    setDraggedIndex(null);
+    setDragOverIndex(null);
+  };
+
   if (questions.length === 0) {
     return (
       <Card className="border-2 border-dashed">
@@ -40,9 +86,19 @@ export function QuestionList({ questions, onRemove }: QuestionListProps) {
         {questions.map((q, index) => (
           <div 
             key={q.id}
-            className="flex items-center gap-3 p-3 bg-secondary/50 rounded-lg group animate-scale-in"
+            draggable
+            onDragStart={(e) => handleDragStart(e, index)}
+            onDragOver={(e) => handleDragOver(e, index)}
+            onDragLeave={handleDragLeave}
+            onDrop={(e) => handleDrop(e, index)}
+            onDragEnd={handleDragEnd}
+            className={cn(
+              "flex items-center gap-3 p-3 bg-secondary/50 rounded-lg group animate-scale-in transition-all duration-200",
+              draggedIndex === index && "opacity-50 scale-95",
+              dragOverIndex === index && draggedIndex !== index && "ring-2 ring-primary ring-offset-2"
+            )}
           >
-            <GripVertical className="h-4 w-4 text-muted-foreground/50" />
+            <GripVertical className="h-4 w-4 text-muted-foreground/50 cursor-grab active:cursor-grabbing" />
             <span className="w-6 h-6 rounded-full bg-primary text-primary-foreground text-xs font-bold flex items-center justify-center">
               {index + 1}
             </span>
@@ -84,6 +140,9 @@ function getQuestionPreview(q: Question): string {
       return q.question.slice(0, 50) + (q.question.length > 50 ? '...' : '');
     case 'true-false':
       return q.statement.slice(0, 50) + (q.statement.length > 50 ? '...' : '');
+    case 'short-answer':
+    case 'long-answer':
+      return q.question.slice(0, 50) + (q.question.length > 50 ? '...' : '');
     default:
       return '';
   }
