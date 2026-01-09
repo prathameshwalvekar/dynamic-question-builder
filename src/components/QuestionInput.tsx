@@ -38,7 +38,14 @@ export function QuestionInput({ onAddQuestion }: QuestionInputProps) {
   
   // True/False
   const [tfStatement, setTfStatement] = useState('');
-
+  
+  // Short Answer
+  const [saQuestion, setSaQuestion] = useState('');
+  const [saLines, setSaLines] = useState(2);
+  
+  // Long Answer
+  const [laQuestion, setLaQuestion] = useState('');
+  const [laLines, setLaLines] = useState(8);
   const handleAddQuestion = () => {
     const id = crypto.randomUUID();
     
@@ -121,6 +128,32 @@ export function QuestionInput({ onAddQuestion }: QuestionInputProps) {
         });
         setTfStatement('');
         break;
+        
+      case 'short-answer':
+        if (!saQuestion.trim()) return;
+        onAddQuestion({
+          id,
+          type: 'short-answer',
+          question: saQuestion,
+          lines: saLines,
+          marks,
+        });
+        setSaQuestion('');
+        setSaLines(2);
+        break;
+        
+      case 'long-answer':
+        if (!laQuestion.trim()) return;
+        onAddQuestion({
+          id,
+          type: 'long-answer',
+          question: laQuestion,
+          lines: laLines,
+          marks,
+        });
+        setLaQuestion('');
+        setLaLines(8);
+        break;
     }
   };
 
@@ -155,6 +188,8 @@ export function QuestionInput({ onAddQuestion }: QuestionInputProps) {
                 <SelectItem value="identify-image">Identify Image</SelectItem>
                 <SelectItem value="multiple-choice">Multiple Choice</SelectItem>
                 <SelectItem value="true-false">True/False</SelectItem>
+                <SelectItem value="short-answer">Short Answer</SelectItem>
+                <SelectItem value="long-answer">Long Answer</SelectItem>
               </SelectContent>
             </Select>
           </div>
@@ -383,6 +418,56 @@ export function QuestionInput({ onAddQuestion }: QuestionInputProps) {
               placeholder="The sun rises in the west."
               className="min-h-[80px]"
             />
+          </div>
+        )}
+
+        {/* Short Answer */}
+        {type === 'short-answer' && (
+          <div className="space-y-4">
+            <div className="space-y-2">
+              <Label>Question</Label>
+              <Textarea 
+                value={saQuestion}
+                onChange={(e) => setSaQuestion(e.target.value)}
+                placeholder="Define photosynthesis in your own words."
+                className="min-h-[80px]"
+              />
+            </div>
+            <div className="space-y-2">
+              <Label>Answer Lines ({saLines})</Label>
+              <Input 
+                type="range" 
+                min={1} 
+                max={5}
+                value={saLines}
+                onChange={(e) => setSaLines(parseInt(e.target.value))}
+              />
+            </div>
+          </div>
+        )}
+
+        {/* Long Answer */}
+        {type === 'long-answer' && (
+          <div className="space-y-4">
+            <div className="space-y-2">
+              <Label>Question</Label>
+              <Textarea 
+                value={laQuestion}
+                onChange={(e) => setLaQuestion(e.target.value)}
+                placeholder="Explain the process of photosynthesis in detail."
+                className="min-h-[80px]"
+              />
+            </div>
+            <div className="space-y-2">
+              <Label>Answer Lines ({laLines})</Label>
+              <Input 
+                type="range" 
+                min={5} 
+                max={15}
+                value={laLines}
+                onChange={(e) => setLaLines(parseInt(e.target.value))}
+              />
+            </div>
           </div>
         )}
 

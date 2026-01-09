@@ -4,7 +4,9 @@ export type QuestionType =
   | 'match-words' 
   | 'identify-image'
   | 'multiple-choice'
-  | 'true-false';
+  | 'true-false'
+  | 'short-answer'
+  | 'long-answer';
 
 export interface BaseQuestion {
   id: string;
@@ -47,13 +49,27 @@ export interface TrueFalseQuestion extends BaseQuestion {
   statement: string;
 }
 
+export interface ShortAnswerQuestion extends BaseQuestion {
+  type: 'short-answer';
+  question: string;
+  lines?: number;
+}
+
+export interface LongAnswerQuestion extends BaseQuestion {
+  type: 'long-answer';
+  question: string;
+  lines?: number;
+}
+
 export type Question = 
   | FillBlankQuestion 
   | WordSearchQuestion 
   | MatchWordsQuestion 
   | IdentifyImageQuestion
   | MultipleChoiceQuestion
-  | TrueFalseQuestion;
+  | TrueFalseQuestion
+  | ShortAnswerQuestion
+  | LongAnswerQuestion;
 
 export interface QuestionPaper {
   title: string;
