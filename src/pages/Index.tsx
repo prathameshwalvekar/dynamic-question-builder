@@ -30,6 +30,10 @@ const Index = () => {
     setQuestions(prev => prev.filter(q => q.id !== id));
   };
 
+  const handleReorderQuestions = (reorderedQuestions: Question[]) => {
+    setQuestions(reorderedQuestions);
+  };
+
   const handleUpdatePaper = (updates: Partial<QuestionPaper>) => {
     setPaper(prev => ({ ...prev, ...updates }));
   };
@@ -66,7 +70,7 @@ const Index = () => {
           <div className="space-y-6 no-print">
             <PaperHeader paper={paper} onUpdate={handleUpdatePaper} />
             <QuestionInput onAddQuestion={handleAddQuestion} />
-            <QuestionList questions={questions} onRemove={handleRemoveQuestion} />
+            <QuestionList questions={questions} onRemove={handleRemoveQuestion} onReorder={handleReorderQuestions} />
           </div>
 
           {/* Right Panel - Preview */}
