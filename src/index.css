@@ -1,0 +1,201 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@import url('https://fonts.googleapis.com/css2?family=Crimson+Pro:wght@400;500;600;700&family=Inter:wght@400;500;600;700&display=swap');
+
+@layer base {
+  :root {
+    --background: 45 30% 97%;
+    --foreground: 220 25% 15%;
+
+    --card: 0 0% 100%;
+    --card-foreground: 220 25% 15%;
+
+    --popover: 0 0% 100%;
+    --popover-foreground: 220 25% 15%;
+
+    --primary: 200 80% 35%;
+    --primary-foreground: 0 0% 100%;
+
+    --secondary: 45 40% 92%;
+    --secondary-foreground: 220 25% 20%;
+
+    --muted: 45 20% 94%;
+    --muted-foreground: 220 15% 45%;
+
+    --accent: 25 90% 55%;
+    --accent-foreground: 0 0% 100%;
+
+    --success: 150 60% 40%;
+    --success-foreground: 0 0% 100%;
+
+    --destructive: 0 84% 60%;
+    --destructive-foreground: 0 0% 100%;
+
+    --border: 220 20% 88%;
+    --input: 220 20% 88%;
+    --ring: 200 80% 35%;
+
+    --radius: 0.5rem;
+
+    --paper: 45 40% 98%;
+    --paper-lines: 220 20% 90%;
+    --puzzle-grid: 200 60% 45%;
+    --puzzle-highlight: 25 90% 55%;
+
+    --font-serif: 'Crimson Pro', Georgia, serif;
+    --font-sans: 'Inter', system-ui, sans-serif;
+
+    --sidebar-background: 0 0% 98%;
+    --sidebar-foreground: 240 5.3% 26.1%;
+    --sidebar-primary: 240 5.9% 10%;
+    --sidebar-primary-foreground: 0 0% 98%;
+    --sidebar-accent: 240 4.8% 95.9%;
+    --sidebar-accent-foreground: 240 5.9% 10%;
+    --sidebar-border: 220 13% 91%;
+    --sidebar-ring: 217.2 91.2% 59.8%;
+  }
+
+  .dark {
+    --background: 220 25% 10%;
+    --foreground: 45 20% 95%;
+
+    --card: 220 25% 14%;
+    --card-foreground: 45 20% 95%;
+
+    --popover: 220 25% 14%;
+    --popover-foreground: 45 20% 95%;
+
+    --primary: 200 70% 50%;
+    --primary-foreground: 220 25% 10%;
+
+    --secondary: 220 20% 20%;
+    --secondary-foreground: 45 20% 90%;
+
+    --muted: 220 20% 18%;
+    --muted-foreground: 220 15% 60%;
+
+    --accent: 25 85% 55%;
+    --accent-foreground: 220 25% 10%;
+
+    --success: 150 50% 45%;
+    --success-foreground: 220 25% 10%;
+
+    --destructive: 0 70% 50%;
+    --destructive-foreground: 45 20% 95%;
+
+    --border: 220 20% 22%;
+    --input: 220 20% 22%;
+    --ring: 200 70% 50%;
+
+    --paper: 220 25% 12%;
+    --paper-lines: 220 20% 25%;
+    --puzzle-grid: 200 60% 50%;
+    --puzzle-highlight: 25 85% 55%;
+
+    --sidebar-background: 240 5.9% 10%;
+    --sidebar-foreground: 240 4.8% 95.9%;
+    --sidebar-primary: 224.3 76.3% 48%;
+    --sidebar-primary-foreground: 0 0% 100%;
+    --sidebar-accent: 240 3.7% 15.9%;
+    --sidebar-accent-foreground: 240 4.8% 95.9%;
+    --sidebar-border: 240 3.7% 15.9%;
+    --sidebar-ring: 217.2 91.2% 59.8%;
+  }
+}
+
+@layer base {
+  * {
+    @apply border-border;
+  }
+
+  body {
+    @apply bg-background text-foreground;
+    font-family: var(--font-sans);
+  }
+
+  h1, h2, h3, h4, h5, h6 {
+    font-family: var(--font-serif);
+  }
+}
+
+@layer components {
+  .paper-texture {
+    @apply bg-paper relative;
+    background-image: 
+      repeating-linear-gradient(
+        0deg,
+        transparent,
+        transparent 31px,
+        hsl(var(--paper-lines)) 31px,
+        hsl(var(--paper-lines)) 32px
+      );
+  }
+
+  .puzzle-grid-cell {
+    @apply w-10 h-10 border border-puzzle-grid flex items-center justify-center 
+           font-bold text-lg uppercase transition-colors duration-200;
+  }
+
+  .puzzle-grid-cell:hover {
+    @apply bg-primary/10;
+  }
+
+  .question-number {
+    @apply inline-flex items-center justify-center w-7 h-7 rounded-full 
+           bg-primary text-primary-foreground text-sm font-semibold mr-3;
+  }
+
+  .blank-line {
+    @apply inline-block border-b-2 border-foreground min-w-[100px] mx-1;
+  }
+
+  .match-connector {
+    @apply w-full h-0.5 bg-muted-foreground/30;
+  }
+}
+
+@layer utilities {
+  .animate-fade-in {
+    animation: fadeIn 0.3s ease-out;
+  }
+
+  .animate-slide-up {
+    animation: slideUp 0.4s ease-out;
+  }
+
+  .animate-scale-in {
+    animation: scaleIn 0.3s ease-out;
+  }
+
+  @keyframes fadeIn {
+    from { opacity: 0; }
+    to { opacity: 1; }
+  }
+
+  @keyframes slideUp {
+    from { opacity: 0; transform: translateY(20px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+
+  @keyframes scaleIn {
+    from { opacity: 0; transform: scale(0.95); }
+    to { opacity: 1; transform: scale(1); }
+  }
+}
+
+@media print {
+  .no-print {
+    display: none !important;
+  }
+
+  .paper-texture {
+    background: white !important;
+    box-shadow: none !important;
+  }
+
+  body {
+    background: white !important;
+  }
+}
