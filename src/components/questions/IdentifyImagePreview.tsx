@@ -8,6 +8,7 @@ interface IdentifyImagePreviewProps {
 export function IdentifyImagePreview({ question, index }: IdentifyImagePreviewProps) {
   return (
     <div className="mb-8 animate-fade-in">
+      <div className="text-sm font-semibold text-primary mb-2">Identify Image</div>
       <div className="flex items-start mb-4">
         <span className="question-number">{index}</span>
         <div className="flex-1">

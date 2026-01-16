@@ -15,6 +15,7 @@ export function WordSearchPreview({ question, index }: WordSearchPreviewProps) {
 
   return (
     <div className="mb-8 animate-fade-in">
+      <div className="text-sm font-semibold text-primary mb-2">Word Search</div>
       <div className="flex items-start mb-4">
         <span className="question-number">{index}</span>
         <div className="flex-1">

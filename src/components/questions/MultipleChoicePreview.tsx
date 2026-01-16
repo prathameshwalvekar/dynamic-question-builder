@@ -10,6 +10,7 @@ export function MultipleChoicePreview({ question, index }: MultipleChoicePreview
 
   return (
     <div className="mb-6 animate-fade-in">
+      <div className="text-sm font-semibold text-primary mb-2">Multiple Choice</div>
       <div className="flex items-start">
         <span className="question-number">{index}</span>
         <div className="flex-1">

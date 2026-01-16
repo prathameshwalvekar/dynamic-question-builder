@@ -8,6 +8,7 @@ interface TrueFalsePreviewProps {
 export function TrueFalsePreview({ question, index }: TrueFalsePreviewProps) {
   return (
     <div className="mb-6 animate-fade-in">
+      <div className="text-sm font-semibold text-primary mb-2">True/False</div>
       <div className="flex items-start">
         <span className="question-number">{index}</span>
         <div className="flex-1">

@@ -10,6 +10,7 @@ export function LongAnswerPreview({ question, index }: LongAnswerPreviewProps) {
   
   return (
     <div className="question-block">
+      <div className="text-sm font-semibold text-primary mb-2">Long Answer</div>
       <div className="flex justify-between items-start mb-3">
         <p className="font-medium">
           <span className="mr-2">{index}.</span>
