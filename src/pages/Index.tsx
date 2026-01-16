@@ -4,6 +4,7 @@ import { QuestionInput } from '@/components/QuestionInput';
 import { PaperHeader } from '@/components/PaperHeader';
 import { QuestionList } from '@/components/QuestionList';
 import { PaperPreview } from '@/components/PaperPreview';
+import { PaperManager } from '@/components/PaperManager';
 import { FileText, Sparkles } from 'lucide-react';
 
 const Index = () => {
@@ -36,6 +37,11 @@ const Index = () => {
 
   const handleUpdatePaper = (updates: Partial<QuestionPaper>) => {
     setPaper(prev => ({ ...prev, ...updates }));
+  };
+
+  const handleLoadPaper = (loadedPaper: QuestionPaper, loadedQuestions: Question[]) => {
+    setPaper(loadedPaper);
+    setQuestions(loadedQuestions);
   };
 
   return (
@@ -71,6 +77,7 @@ const Index = () => {
             <PaperHeader paper={paper} onUpdate={handleUpdatePaper} />
             <QuestionInput onAddQuestion={handleAddQuestion} />
             <QuestionList questions={questions} onRemove={handleRemoveQuestion} onReorder={handleReorderQuestions} />
+            <PaperManager paper={paper} questions={questions} onLoadPaper={handleLoadPaper} />
           </div>
 
           {/* Right Panel - Preview */}
