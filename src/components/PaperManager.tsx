@@ -9,21 +9,76 @@ import { Textarea } from '@/components/ui/textarea';
 import { Save, FolderOpen, Trash2, Plus } from 'lucide-react';
 import { toast } from 'sonner';
 
-// Mock storage for now - replace with actual Convex implementation later
-const mockStorage = {
-  papers: [] as any[],
-  savePaper: async (paper: any) => {
-    const newPaper = { ...paper, _id: `paper_${Date.now()}`, createdAt: Date.now() };
-    mockStorage.papers.push(newPaper);
-    return newPaper._id;
-  },
-  getPapers: async () => mockStorage.papers,
-  getPaper: async (id: string) => mockStorage.papers.find(p => p._id === id),
-  deletePaper: async (id: string) => {
-    const index = mockStorage.papers.findIndex(p => p._id === id);
+// Local storage implementation
+const localStorageKey = 'questionPapers';
+
+const savePaperToStorage = async (paper: any) => {
+  try {
+    const existingPapers = getPapersFromStorage();
+    const newPaper = { 
+      ...paper, 
+      id: `paper_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`, 
+      createdAt: Date.now(),
+      updatedAt: Date.now()
+    };
+    existingPapers.push(newPaper);
+    savePapersToStorage(existingPapers);
+    return newPaper.id;
+  } catch (error) {
+    console.error('Failed to save paper:', error);
+    throw error;
+  }
+};
+
+const getPapersFromStorage = () => {
+  try {
+    const stored = localStorage.getItem(localStorageKey);
+    return stored ? JSON.parse(stored) : [];
+  } catch (error) {
+    console.error('Failed to parse stored papers:', error);
+    return [];
+  }
+};
+
+const savePapersToStorage = (papers: any[]) => {
+  try {
+    localStorage.setItem(localStorageKey, JSON.stringify(papers));
+  } catch (error) {
+    console.error('Failed to save papers to localStorage:', error);
+    throw error;
+  }
+};
+
+const getAllPapers = async () => {
+  try {
+    return getPapersFromStorage();
+  } catch (error) {
+    console.error('Failed to get papers:', error);
+    return [];
+  }
+};
+
+const getPaperById = async (id: string) => {
+  try {
+    const papers = getPapersFromStorage();
+    return papers.find(p => p.id === id);
+  } catch (error) {
+    console.error('Failed to get paper:', error);
+    return null;
+  }
+};
+
+const deletePaperById = async (id: string) => {
+  try {
+    const papers = getPapersFromStorage();
+    const index = papers.findIndex(p => p.id === id);
     if (index > -1) {
-      mockStorage.papers.splice(index, 1);
+      papers.splice(index, 1);
+      savePapersToStorage(papers);
     }
+  } catch (error) {
+    console.error('Failed to delete paper:', error);
+    throw error;
   }
 };
 
@@ -49,7 +104,7 @@ export function PaperManager({ paper, questions, onLoadPaper }: PaperManagerProp
 
   const loadSavedPapers = async () => {
     try {
-      const papers = await mockStorage.getPapers();
+      const papers = await getAllPapers();
       setSavedPapers(papers);
     } catch (error) {
       console.error('Failed to load papers:', error);
@@ -62,7 +117,7 @@ export function PaperManager({ paper, questions, onLoadPaper }: PaperManagerProp
       const totalMarks = questions.reduce((sum, q) => sum + q.marks, 0);
       const instructions = saveInstructions.split('\n').filter(i => i.trim());
       
-      await mockStorage.savePaper({
+      await savePaperToStorage({
         title: saveTitle,
         subject: saveSubject || undefined,
         class: saveClass || undefined,
@@ -100,7 +155,7 @@ export function PaperManager({ paper, questions, onLoadPaper }: PaperManagerProp
 
   const handleLoadPaper = async (paperId: string) => {
     try {
-      const paperData = await mockStorage.getPaper(paperId);
+      const paperData = await getPaperById(paperId);
       if (paperData && onLoadPaper) {
         const loadedQuestions: Question[] = paperData.questions.map(q => {
           const baseQuestion = {
@@ -144,7 +199,7 @@ export function PaperManager({ paper, questions, onLoadPaper }: PaperManagerProp
 
   const handleDeletePaper = async (paperId: string) => {
     try {
-      await mockStorage.deletePaper(paperId);
+      await deletePaperById(paperId);
       toast.success('Question paper deleted successfully!');
       await loadSavedPapers();
     } catch (error) {
@@ -239,7 +294,7 @@ export function PaperManager({ paper, questions, onLoadPaper }: PaperManagerProp
             <div className="space-y-2">
               {savedPapers.map((savedPaper) => (
                 <div
-                  key={savedPaper._id}
+                  key={savedPaper.id}
                   className="flex items-center justify-between p-3 bg-secondary/50 rounded-lg"
                 >
                   <div className="flex-1 min-w-0">
@@ -256,7 +311,7 @@ export function PaperManager({ paper, questions, onLoadPaper }: PaperManagerProp
                     <Button
                       size="sm"
                       variant="outline"
-                      onClick={() => handleLoadPaper(savedPaper._id)}
+                      onClick={() => handleLoadPaper(savedPaper.id)}
                     >
                       <Plus className="h-4 w-4 mr-1" />
                       Load
@@ -264,7 +319,7 @@ export function PaperManager({ paper, questions, onLoadPaper }: PaperManagerProp
                     <Button
                       size="sm"
                       variant="ghost"
-                      onClick={() => handleDeletePaper(savedPaper._id)}
+                      onClick={() => handleDeletePaper(savedPaper.id)}
                     >
                       <Trash2 className="h-4 w-4 text-destructive" />
                     </Button>
